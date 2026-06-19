@@ -1,0 +1,58 @@
+{
+  "frames": [
+    {
+      "name": "cmiro_g0_down_00",
+      "src_x": 0,
+      "src_y": 90,
+      "src_w": 64,
+      "src_h": 98,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_down_01",
+      "src_x": 64,
+      "src_y": 90,
+      "src_w": 56,
+      "src_h": 98,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_down_02",
+      "src_x": 120,
+      "src_y": 90,
+      "src_w": 56,
+      "src_h": 98,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_down_03",
+      "src_x": 176,
+      "src_y": 90,
+      "src_w": 48,
+      "src_h": 98,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_down_04",
+      "src_x": 224,
+      "src_y": 90,
+      "src_w": 48,
+      "src_h": 98,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_down_05",
+      "src_x": 272,
+      "src_y": 90,
+      "src_w": 56,
+      "src_h": 98,
+      "pivot_x": 36,
+      "pivot_y": 76
+    }
+  ]
+}

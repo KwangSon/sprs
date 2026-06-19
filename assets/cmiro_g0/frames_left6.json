@@ -1,0 +1,58 @@
+{
+  "frames": [
+    {
+      "name": "cmiro_g0_left_00",
+      "src_x": 0,
+      "src_y": 188,
+      "src_w": 43,
+      "src_h": 82,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_left_01",
+      "src_x": 55,
+      "src_y": 188,
+      "src_w": 62,
+      "src_h": 82,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_left_02",
+      "src_x": 129,
+      "src_y": 188,
+      "src_w": 42,
+      "src_h": 82,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_left_03",
+      "src_x": 185,
+      "src_y": 188,
+      "src_w": 67,
+      "src_h": 82,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_left_04",
+      "src_x": 262,
+      "src_y": 188,
+      "src_w": 68,
+      "src_h": 82,
+      "pivot_x": 36,
+      "pivot_y": 76
+    },
+    {
+      "name": "cmiro_g0_left_05",
+      "src_x": 341,
+      "src_y": 188,
+      "src_w": 67,
+      "src_h": 82,
+      "pivot_x": 36,
+      "pivot_y": 76
+    }
+  ]
+}

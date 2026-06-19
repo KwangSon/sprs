@@ -1,6 +1,6 @@
 use anyhow::{Context, Result, anyhow};
 use clap::Parser;
-use gif::{Encoder, Frame as GifFrame, Repeat};
+use gif::{DisposalMethod, Encoder, Frame as GifFrame, Repeat};
 use image::{DynamicImage, GenericImageView, Rgba, RgbaImage};
 use serde::Deserialize;
 use std::fs::{self, File};
@@ -471,6 +471,7 @@ fn write_gif_preview(path: &Path, frames: &[RgbaImage], fps: u32, scale: u32) ->
         let mut raw = frame_img.into_raw();
         let mut frame = GifFrame::from_rgba_speed(gif_w as u16, gif_h as u16, &mut raw, 10);
         frame.delay = delay;
+        frame.dispose = DisposalMethod::Background;
         encoder.write_frame(&frame)?;
     }
 

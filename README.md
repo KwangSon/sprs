@@ -1,0 +1,1 @@
+cargo run -- --config sprs.cmiro_g0_top6.json

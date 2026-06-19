@@ -1,0 +1,16 @@
+{
+  "frames": [
+    { "name": "skel_ud_00", "src_x": 0, "src_y": 0, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_01", "src_x": 80, "src_y": 0, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_02", "src_x": 160, "src_y": 0, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_03", "src_x": 240, "src_y": 0, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_04", "src_x": 320, "src_y": 0, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_05", "src_x": 400, "src_y": 0, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_06", "src_x": 0, "src_y": 96, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_07", "src_x": 80, "src_y": 96, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_08", "src_x": 160, "src_y": 96, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_09", "src_x": 240, "src_y": 96, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_10", "src_x": 320, "src_y": 96, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
+    { "name": "skel_ud_11", "src_x": 400, "src_y": 96, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 }
+  ]
+}

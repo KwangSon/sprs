@@ -1,0 +1,16 @@
+{
+  "input": "assets/cdit/CDIT1.png",
+  "frames": "assets/cdit/frames_ud12.json",
+  "canvas": "80x96",
+  "target_pivot": "40,84",
+  "output": "dist/cdit/CDIT_attack_ud12.png",
+  "frames_out_dir": "dist/cdit/ud12_frames",
+  "pivot_png_dir": "dist/cdit/ud12_pivots",
+  "debug_sheet": "dist/cdit/ud12_debug_sheet.png",
+  "gif": "dist/cdit/ud12_preview.gif",
+  "fps": 8,
+  "columns": 12,
+  "marker_size": 4,
+  "gif_scale": 2,
+  "out_meta": "dist/cdit/ud12_meta.json"
+}

@@ -7,7 +7,7 @@
   "rows": 2,
   "output_frames": [
     {
-      "name": "cmiro_g0_lr_00",
+      "name": "cmiro_lr_00",
       "src_x": 0,
       "src_y": 188,
       "src_w": 43,
@@ -20,7 +20,7 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_g0_lr_01",
+      "name": "cmiro_lr_01",
       "src_x": 55,
       "src_y": 188,
       "src_w": 62,
@@ -33,7 +33,7 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_g0_lr_02",
+      "name": "cmiro_lr_02",
       "src_x": 129,
       "src_y": 188,
       "src_w": 42,
@@ -46,7 +46,7 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_g0_lr_03",
+      "name": "cmiro_lr_03",
       "src_x": 185,
       "src_y": 188,
       "src_w": 67,
@@ -59,7 +59,7 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_g0_lr_04",
+      "name": "cmiro_lr_04",
       "src_x": 262,
       "src_y": 188,
       "src_w": 68,
@@ -72,7 +72,7 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_g0_lr_05",
+      "name": "cmiro_lr_05",
       "src_x": 341,
       "src_y": 188,
       "src_w": 67,
@@ -85,7 +85,7 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_g0_lr_06",
+      "name": "cmiro_lr_06",
       "src_x": 10,
       "src_y": 270,
       "src_w": 41,
@@ -98,7 +98,7 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_g0_lr_07",
+      "name": "cmiro_lr_07",
       "src_x": 73,
       "src_y": 270,
       "src_w": 63,
@@ -111,7 +111,7 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_g0_lr_08",
+      "name": "cmiro_lr_08",
       "src_x": 149,
       "src_y": 270,
       "src_w": 42,
@@ -124,7 +124,7 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_g0_lr_09",
+      "name": "cmiro_lr_09",
       "src_x": 195,
       "src_y": 270,
       "src_w": 67,
@@ -137,7 +137,7 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_g0_lr_10",
+      "name": "cmiro_lr_10",
       "src_x": 278,
       "src_y": 270,
       "src_w": 68,
@@ -150,7 +150,7 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_g0_lr_11",
+      "name": "cmiro_lr_11",
       "src_x": 358,
       "src_y": 270,
       "src_w": 68,

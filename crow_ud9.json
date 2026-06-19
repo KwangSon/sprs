@@ -1,0 +1,16 @@
+{
+  "input": "assets/crow/CCROW.png",
+  "frames": "assets/crow/frames_ud9.json",
+  "canvas": "64x96",
+  "target_pivot": "32,84",
+  "output": "dist/crow/CCROW_attack_ud9.png",
+  "frames_out_dir": "dist/crow/ud9_frames",
+  "pivot_png_dir": "dist/crow/ud9_pivots",
+  "debug_sheet": "dist/crow/ud9_debug_sheet.png",
+  "gif": "dist/crow/ud9_preview.gif",
+  "fps": 8,
+  "columns": 9,
+  "marker_size": 4,
+  "gif_scale": 2,
+  "out_meta": "dist/crow/ud9_meta.json"
+}

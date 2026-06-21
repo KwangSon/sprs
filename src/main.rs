@@ -13,12 +13,14 @@ const GIF_FPS: u32 = 5;
 #[serde(deny_unknown_fields)]
 struct ConfigFile {
     input: PathBuf,
+    name: Option<Vec<String>>,
 }
 
 #[derive(Debug)]
 struct Settings {
     input: PathBuf,
     output_stem: String,
+    names: Option<Vec<String>>,
 }
 
 #[derive(Debug)]
@@ -31,24 +33,26 @@ fn main() -> Result<()> {
     let settings = Settings::from_env()?;
     let source_img = load_input_image(&settings)?;
     let rows = detect_rows(&source_img)?;
+    validate_names(&settings.names, rows.len())?;
 
     for (i, row) in rows.iter().enumerate() {
         validate_row_bounds(&source_img, row)?;
         let x_runs = detect_frame_runs(&source_img, row)?;
+        let output_name = row_output_name(&settings, i);
 
-        let output = row_output_path(&settings.output_stem, i);
+        let output = row_output_path(&output_name);
         ensure_parent_dir(&output)?;
         write_row_sheet_png(&output, &source_img, row, &x_runs)?;
 
         println!("OK: wrote {}", output.display());
 
-        let debug_output = row_debug_output_path(&settings.output_stem, i);
+        let debug_output = row_debug_output_path(&output_name);
         ensure_parent_dir(&debug_output)?;
         write_row_debug_png(&debug_output, &source_img, row, &x_runs)?;
 
         println!("OK: wrote {}", debug_output.display());
 
-        let gif_output = row_gif_output_path(&settings.output_stem, i);
+        let gif_output = row_gif_output_path(&output_name);
         ensure_parent_dir(&gif_output)?;
         write_row_gif(&gif_output, &source_img, row, &x_runs, GIF_FPS)?;
 
@@ -66,6 +70,7 @@ impl Settings {
         Ok(Self {
             input: config.input,
             output_stem: config_stem(&config_path),
+            names: config.name,
         })
     }
 }
@@ -98,16 +103,41 @@ fn config_stem(config_path: &Path) -> String {
         .to_owned()
 }
 
-fn row_output_path(stem: &str, row_index: usize) -> PathBuf {
-    PathBuf::from("dist").join(format!("{}_r{}.png", stem, row_index))
+fn validate_names(names: &Option<Vec<String>>, row_count: usize) -> Result<()> {
+    if let Some(names) = names {
+        if names.len() != row_count {
+            return Err(anyhow!(
+                "name length must match detected row count: names={}, rows={}",
+                names.len(),
+                row_count
+            ));
+        }
+    }
+
+    Ok(())
 }
 
-fn row_debug_output_path(stem: &str, row_index: usize) -> PathBuf {
-    PathBuf::from("dist").join(format!("{}_r{}_debug.png", stem, row_index))
+fn row_output_name(settings: &Settings, row_index: usize) -> String {
+    let suffix = settings
+        .names
+        .as_ref()
+        .and_then(|names| names.get(row_index))
+        .cloned()
+        .unwrap_or_else(|| format!("r{}", row_index));
+
+    format!("{}_{}", settings.output_stem, suffix)
 }
 
-fn row_gif_output_path(stem: &str, row_index: usize) -> PathBuf {
-    PathBuf::from("dist").join(format!("{}_r{}.gif", stem, row_index))
+fn row_output_path(name: &str) -> PathBuf {
+    PathBuf::from("prd").join(format!("{}.png", name))
+}
+
+fn row_debug_output_path(name: &str) -> PathBuf {
+    PathBuf::from("debug").join(format!("{}.png", name))
+}
+
+fn row_gif_output_path(name: &str) -> PathBuf {
+    PathBuf::from("debug").join(format!("{}.gif", name))
 }
 
 fn load_input_image(settings: &Settings) -> Result<DynamicImage> {

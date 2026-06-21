@@ -1,22 +1,43 @@
 {
-  "frames": [
-    { "name": "crow_lr_00", "src_x": 0, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_01", "src_x": 64, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_02", "src_x": 128, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_03", "src_x": 192, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_04", "src_x": 256, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_05", "src_x": 320, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_06", "src_x": 384, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_07", "src_x": 448, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_08", "src_x": 512, "src_y": 192, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_09", "src_x": 0, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_10", "src_x": 64, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_11", "src_x": 128, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_12", "src_x": 192, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_13", "src_x": 256, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_14", "src_x": 320, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_15", "src_x": 384, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_16", "src_x": 448, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 },
-    { "name": "crow_lr_17", "src_x": 512, "src_y": 288, "src_w": 64, "src_h": 96, "pivot_x": 32, "pivot_y": 84 }
+  "y_coords": [
+    192,
+    288,
+    384
+  ],
+  "default_pivot": [
+    32,
+    84
+  ],
+  "rows": [
+    {
+      "prefix": "crow_lr",
+      "x_coords": [
+        0,
+        64,
+        128,
+        192,
+        256,
+        320,
+        384,
+        448,
+        512,
+        576
+      ]
+    },
+    {
+      "prefix": "crow_lr",
+      "x_coords": [
+        0,
+        64,
+        128,
+        192,
+        256,
+        320,
+        384,
+        448,
+        512,
+        576
+      ]
+    }
   ]
 }

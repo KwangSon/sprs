@@ -85,7 +85,7 @@ struct Settings {
     input_url: Option<String>,
     frames: PathBuf,
     canvas: String,
-    target_pivot: String,
+    target_pivot: Option<String>,
     output: PathBuf,
     frames_out_dir: Option<PathBuf>,
     pivot_png_dir: Option<PathBuf>,
@@ -100,12 +100,21 @@ struct Settings {
 
 #[derive(Debug, Deserialize)]
 struct FramesFile {
-    frames: Vec<FrameConfig>,
+    y_coords: Vec<u32>,
+    default_pivot: Option<[i32; 2]>,
+    rows: Vec<RowDef>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
-struct FrameConfig {
-    name: Option<String>,
+#[derive(Debug, Deserialize)]
+struct RowDef {
+    prefix: String,
+    x_coords: Vec<u32>,
+    pivots: Option<Vec<[i32; 2]>>,
+}
+
+#[derive(Debug)]
+struct ValidFrame {
+    name: String,
     src_x: u32,
     src_y: u32,
     src_w: u32,
@@ -145,19 +154,93 @@ fn main() -> Result<()> {
     let settings = Settings::from_args(args)?;
 
     let (canvas_w, canvas_h) = parse_size(&settings.canvas)?;
-    let (target_pivot_x, target_pivot_y) = parse_point(&settings.target_pivot)?;
-    let source_img = load_input_image(&settings)?;
     let frames_file = read_frames(&settings.frames)?;
 
-    if frames_file.frames.is_empty() {
-        return Err(anyhow!("frames.json has no frames"));
+    if frames_file.rows.is_empty() {
+        return Err(anyhow!("frames.json has no rows"));
+    }
+
+    if frames_file.y_coords.len() < frames_file.rows.len() + 1 {
+        return Err(anyhow!("frames.json y_coords length must be at least rows.len() + 1"));
+    }
+
+    let (target_pivot_x, target_pivot_y) = match &settings.target_pivot {
+        Some(p) => parse_point(p)?,
+        None => {
+            if let Some(dp) = frames_file.default_pivot {
+                (dp[0], dp[1])
+            } else if let Some(first_row) = frames_file.rows.first() {
+                if let Some(pivots) = &first_row.pivots {
+                    if let Some(p) = pivots.first() {
+                        (p[0], p[1])
+                    } else {
+                        return Err(anyhow!("no pivot found in first row"));
+                    }
+                } else {
+                    return Err(anyhow!("no default_pivot and no pivots in first row"));
+                }
+            } else {
+                return Err(anyhow!("frames.json has no valid rows to extract pivot"));
+            }
+        }
+    };
+
+    let source_img = load_input_image(&settings)?;
+
+    let mut actual_frames = Vec::new();
+    for (r, row) in frames_file.rows.iter().enumerate() {
+        if row.x_coords.len() < 2 {
+            continue;
+        }
+
+        let src_y = frames_file.y_coords[r];
+        let src_h = frames_file.y_coords[r + 1].saturating_sub(src_y);
+        let num_frames = row.x_coords.len() - 1;
+
+        if let Some(cols) = settings.columns {
+            if num_frames as u32 != cols {
+                println!(
+                    "Warning: row '{}' has {} frames, but settings.columns is {}",
+                    row.prefix, num_frames, cols
+                );
+            }
+        }
+
+        for c in 0..num_frames {
+            let src_x = row.x_coords[c];
+            let src_w = row.x_coords[c + 1].saturating_sub(src_x);
+
+            let pivot = if let Some(pivots) = &row.pivots {
+                if let Some(p) = pivots.get(c) {
+                    *p
+                } else {
+                    frames_file.default_pivot.unwrap_or([0, 0])
+                }
+            } else {
+                frames_file.default_pivot.unwrap_or([0, 0])
+            };
+
+            actual_frames.push(ValidFrame {
+                name: format!("{}_{:02}", row.prefix, c),
+                src_x,
+                src_y,
+                src_w,
+                src_h,
+                pivot_x: pivot[0],
+                pivot_y: pivot[1],
+            });
+        }
+    }
+
+    if actual_frames.is_empty() {
+        return Err(anyhow!("frames.json has no valid frames"));
     }
 
     let columns = settings
         .columns
-        .unwrap_or(frames_file.frames.len() as u32)
+        .unwrap_or(actual_frames.len() as u32)
         .max(1);
-    let rows = ((frames_file.frames.len() as u32) + columns - 1) / columns;
+    let rows = ((actual_frames.len() as u32) + columns - 1) / columns;
 
     let mut clean_sheet =
         RgbaImage::from_pixel(canvas_w * columns, canvas_h * rows, Rgba([0, 0, 0, 0]));
@@ -176,13 +259,10 @@ fn main() -> Result<()> {
     let mut normalized_frames = Vec::new();
     let mut output_meta_frames = Vec::new();
 
-    for (i, frame) in frames_file.frames.iter().enumerate() {
+    for (i, frame) in actual_frames.iter().enumerate() {
         validate_frame_bounds(&source_img, frame)?;
 
-        let name = frame
-            .name
-            .clone()
-            .unwrap_or_else(|| format!("frame_{:03}", i));
+        let name = &frame.name;
 
         let cropped = source_img
             .crop_imm(frame.src_x, frame.src_y, frame.src_w, frame.src_h)
@@ -216,17 +296,17 @@ fn main() -> Result<()> {
         blit_clipped(&mut debug_sheet, &marked, sheet_x as i32, sheet_y as i32);
 
         if let Some(dir) = &settings.frames_out_dir {
-            normalized.save(dir.join(format!("{:03}_{}.png", i, sanitize_filename(&name))))?;
+            normalized.save(dir.join(format!("{:03}_{}.png", i, sanitize_filename(name))))?;
         }
 
         if let Some(dir) = &settings.pivot_png_dir {
-            marked.save(dir.join(format!("{:03}_{}_pivot.png", i, sanitize_filename(&name))))?;
+            marked.save(dir.join(format!("{:03}_{}_pivot.png", i, sanitize_filename(name))))?;
         }
 
         normalized_frames.push(normalized);
 
         output_meta_frames.push(OutputFrameMeta {
-            name,
+            name: name.clone(),
             src_x: frame.src_x,
             src_y: frame.src_y,
             src_w: frame.src_w,
@@ -301,9 +381,7 @@ impl Settings {
                 .canvas
                 .or(config.canvas)
                 .context("missing canvas; pass --canvas or set canvas in config")?,
-            target_pivot: args.target_pivot.or(config.target_pivot).context(
-                "missing target_pivot; pass --target-pivot or set target_pivot in config",
-            )?,
+            target_pivot: args.target_pivot.or(config.target_pivot),
             output: args
                 .output
                 .or(config.output)
@@ -350,7 +428,7 @@ fn read_frames(path: &Path) -> Result<FramesFile> {
     Ok(serde_json::from_str(&text)?)
 }
 
-fn validate_frame_bounds(img: &DynamicImage, frame: &FrameConfig) -> Result<()> {
+fn validate_frame_bounds(img: &DynamicImage, frame: &ValidFrame) -> Result<()> {
     let (img_w, img_h) = img.dimensions();
     let end_x = frame.src_x.saturating_add(frame.src_w);
     let end_y = frame.src_y.saturating_add(frame.src_h);

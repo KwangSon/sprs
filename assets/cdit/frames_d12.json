@@ -1,16 +1,30 @@
 {
-  "frames": [
-    { "name": "cdit_d_00", "src_x": 0, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_01", "src_x": 80, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_02", "src_x": 160, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_03", "src_x": 240, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_04", "src_x": 320, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_05", "src_x": 400, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_06", "src_x": 480, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_07", "src_x": 560, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_08", "src_x": 640, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_09", "src_x": 720, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_10", "src_x": 800, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 },
-    { "name": "cdit_d_11", "src_x": 880, "src_y": 100, "src_w": 80, "src_h": 96, "pivot_x": 40, "pivot_y": 84 }
+  "y_coords": [
+    100,
+    196
+  ],
+  "default_pivot": [
+    40,
+    84
+  ],
+  "rows": [
+    {
+      "prefix": "cdit_d",
+      "x_coords": [
+        0,
+        80,
+        160,
+        240,
+        320,
+        400,
+        480,
+        560,
+        640,
+        720,
+        800,
+        880,
+        960
+      ]
+    }
   ]
 }

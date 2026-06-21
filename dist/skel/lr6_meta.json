@@ -85,7 +85,7 @@
       "sheet_y": 0
     },
     {
-      "name": "skel_lr_06",
+      "name": "skel_lr_00",
       "src_x": 0,
       "src_y": 288,
       "src_w": 80,
@@ -98,7 +98,7 @@
       "sheet_y": 96
     },
     {
-      "name": "skel_lr_07",
+      "name": "skel_lr_01",
       "src_x": 80,
       "src_y": 288,
       "src_w": 80,
@@ -111,7 +111,7 @@
       "sheet_y": 96
     },
     {
-      "name": "skel_lr_08",
+      "name": "skel_lr_02",
       "src_x": 160,
       "src_y": 288,
       "src_w": 80,
@@ -124,7 +124,7 @@
       "sheet_y": 96
     },
     {
-      "name": "skel_lr_09",
+      "name": "skel_lr_03",
       "src_x": 240,
       "src_y": 288,
       "src_w": 80,
@@ -137,7 +137,7 @@
       "sheet_y": 96
     },
     {
-      "name": "skel_lr_10",
+      "name": "skel_lr_04",
       "src_x": 320,
       "src_y": 288,
       "src_w": 80,
@@ -150,7 +150,7 @@
       "sheet_y": 96
     },
     {
-      "name": "skel_lr_11",
+      "name": "skel_lr_05",
       "src_x": 400,
       "src_y": 288,
       "src_w": 80,

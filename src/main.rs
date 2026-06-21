@@ -1,9 +1,13 @@
 use anyhow::{Context, Result, anyhow};
+use gif::{DisposalMethod, Encoder, Frame as GifFrame, Repeat};
 use image::{DynamicImage, GenericImageView, Rgba, RgbaImage};
 use serde::Deserialize;
 use std::env;
-use std::fs;
+use std::fs::{self, File};
+use std::io::Write;
 use std::path::{Path, PathBuf};
+
+const GIF_FPS: u32 = 5;
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -14,64 +18,43 @@ struct ConfigFile {
 #[derive(Debug)]
 struct Settings {
     input: PathBuf,
-    output: PathBuf,
+    output_stem: String,
 }
 
 #[derive(Debug)]
-struct ValidFrame {
-    src_x: u32,
+struct RowRegion {
     src_y: u32,
-    src_w: u32,
     src_h: u32,
-    row: u32,
-    col: u32,
 }
 
 fn main() -> Result<()> {
     let settings = Settings::from_env()?;
     let source_img = load_input_image(&settings)?;
-    let actual_frames = detect_frames(&source_img)?;
-    let (canvas_w, canvas_h) = resolve_canvas(&actual_frames)?;
+    let rows = detect_rows(&source_img)?;
 
-    let columns = actual_frames
-        .iter()
-        .map(|frame| frame.col + 1)
-        .max()
-        .unwrap_or(1);
-    let rows = actual_frames
-        .iter()
-        .map(|frame| frame.row + 1)
-        .max()
-        .unwrap_or(1);
+    for (i, row) in rows.iter().enumerate() {
+        validate_row_bounds(&source_img, row)?;
+        let x_runs = detect_frame_runs(&source_img, row)?;
 
-    let mut clean_sheet =
-        RgbaImage::from_pixel(canvas_w * columns, canvas_h * rows, Rgba([0, 0, 0, 0]));
+        let output = row_output_path(&settings.output_stem, i);
+        ensure_parent_dir(&output)?;
+        write_row_sheet_png(&output, &source_img, row, &x_runs)?;
 
-    for frame in &actual_frames {
-        validate_frame_bounds(&source_img, frame)?;
+        println!("OK: wrote {}", output.display());
 
-        let cropped = source_img
-            .crop_imm(frame.src_x, frame.src_y, frame.src_w, frame.src_h)
-            .to_rgba8();
+        let debug_output = row_debug_output_path(&settings.output_stem, i);
+        ensure_parent_dir(&debug_output)?;
+        write_row_debug_png(&debug_output, &source_img, row, &x_runs)?;
 
-        let mut normalized = RgbaImage::from_pixel(canvas_w, canvas_h, Rgba([0, 0, 0, 0]));
-        blit_clipped(&mut normalized, &cropped, 0, 0);
+        println!("OK: wrote {}", debug_output.display());
 
-        let sheet_x = frame.col * canvas_w;
-        let sheet_y = frame.row * canvas_h;
+        let gif_output = row_gif_output_path(&settings.output_stem, i);
+        ensure_parent_dir(&gif_output)?;
+        write_row_gif(&gif_output, &source_img, row, &x_runs, GIF_FPS)?;
 
-        blit_clipped(
-            &mut clean_sheet,
-            &normalized,
-            sheet_x as i32,
-            sheet_y as i32,
-        );
+        println!("OK: wrote {}", gif_output.display());
     }
 
-    ensure_parent_dir(&settings.output)?;
-    clean_sheet.save(&settings.output)?;
-
-    println!("OK: wrote {}", settings.output.display());
     Ok(())
 }
 
@@ -82,7 +65,7 @@ impl Settings {
 
         Ok(Self {
             input: config.input,
-            output: default_output_path(&config_path),
+            output_stem: config_stem(&config_path),
         })
     }
 }
@@ -107,12 +90,24 @@ fn parse_config_path() -> Result<PathBuf> {
     Ok(PathBuf::from(config_path))
 }
 
-fn default_output_path(config_path: &Path) -> PathBuf {
-    let stem = config_path
+fn config_stem(config_path: &Path) -> String {
+    config_path
         .file_stem()
         .and_then(|s| s.to_str())
-        .unwrap_or("sheet");
-    PathBuf::from("dist").join(format!("{}.png", stem))
+        .unwrap_or("sheet")
+        .to_owned()
+}
+
+fn row_output_path(stem: &str, row_index: usize) -> PathBuf {
+    PathBuf::from("dist").join(format!("{}_r{}.png", stem, row_index))
+}
+
+fn row_debug_output_path(stem: &str, row_index: usize) -> PathBuf {
+    PathBuf::from("dist").join(format!("{}_r{}_debug.png", stem, row_index))
+}
+
+fn row_gif_output_path(stem: &str, row_index: usize) -> PathBuf {
+    PathBuf::from("dist").join(format!("{}_r{}.gif", stem, row_index))
 }
 
 fn load_input_image(settings: &Settings) -> Result<DynamicImage> {
@@ -127,30 +122,21 @@ fn read_config(path: &Path) -> Result<ConfigFile> {
         .with_context(|| format!("failed to parse config {}", path.display()))
 }
 
-fn detect_frames(source_img: &DynamicImage) -> Result<Vec<ValidFrame>> {
+fn detect_rows(source_img: &DynamicImage) -> Result<Vec<RowRegion>> {
     let (img_w, img_h) = source_img.dimensions();
     let y_runs = detect_alpha_axis_runs(source_img, Axis::Y, 0, img_w, 0, img_h);
-    let mut frames = Vec::new();
 
-    for (row_index, (src_y, end_y)) in y_runs.iter().copied().enumerate() {
-        let x_runs = detect_alpha_axis_runs(source_img, Axis::X, 0, img_w, src_y, end_y);
-        for (col_index, (src_x, end_x)) in x_runs.into_iter().enumerate() {
-            frames.push(ValidFrame {
-                src_x,
-                src_y,
-                src_w: end_x - src_x,
-                src_h: end_y - src_y,
-                row: row_index as u32,
-                col: col_index as u32,
-            });
-        }
-    }
-
-    if frames.is_empty() {
+    if y_runs.is_empty() {
         return Err(anyhow!("auto detection found no non-transparent pixels"));
     }
 
-    Ok(frames)
+    Ok(y_runs
+        .into_iter()
+        .map(|(src_y, end_y)| RowRegion {
+            src_y,
+            src_h: end_y - src_y,
+        })
+        .collect())
 }
 
 #[derive(Clone, Copy)]
@@ -197,39 +183,153 @@ fn detect_alpha_axis_runs(
     runs
 }
 
-fn resolve_canvas(frames: &[ValidFrame]) -> Result<(u32, u32)> {
-    let canvas_w = frames.iter().map(|frame| frame.src_w).max().unwrap_or(0);
-    let canvas_h = frames.iter().map(|frame| frame.src_h).max().unwrap_or(0);
+fn validate_row_bounds(img: &DynamicImage, row: &RowRegion) -> Result<()> {
+    let (_, img_h) = img.dimensions();
+    let end_y = row.src_y.saturating_add(row.src_h);
 
-    if canvas_w == 0 || canvas_h == 0 {
-        return Err(anyhow!("detected frames have zero-sized canvas"));
+    if row.src_h == 0 {
+        return Err(anyhow!("row has zero height: {:?}", row));
     }
 
-    Ok((canvas_w, canvas_h))
-}
-
-fn validate_frame_bounds(img: &DynamicImage, frame: &ValidFrame) -> Result<()> {
-    let (img_w, img_h) = img.dimensions();
-    let end_x = frame.src_x.saturating_add(frame.src_w);
-    let end_y = frame.src_y.saturating_add(frame.src_h);
-
-    if frame.src_w == 0 || frame.src_h == 0 {
-        return Err(anyhow!("frame has zero size: {:?}", frame));
-    }
-
-    if end_x > img_w || end_y > img_h {
+    if end_y > img_h {
         return Err(anyhow!(
-            "frame out of bounds: src=({}, {}) size={}x{}, image={}x{}",
-            frame.src_x,
-            frame.src_y,
-            frame.src_w,
-            frame.src_h,
-            img_w,
+            "row out of bounds: y={} height={}, image height={}",
+            row.src_y,
+            row.src_h,
             img_h
         ));
     }
 
     Ok(())
+}
+
+fn detect_frame_runs(source_img: &DynamicImage, row: &RowRegion) -> Result<Vec<(u32, u32)>> {
+    let (img_w, _) = source_img.dimensions();
+    let x_runs = detect_alpha_axis_runs(
+        source_img,
+        Axis::X,
+        0,
+        img_w,
+        row.src_y,
+        row.src_y + row.src_h,
+    );
+
+    if x_runs.is_empty() {
+        return Err(anyhow!(
+            "row has no non-transparent frame pixels: {:?}",
+            row
+        ));
+    }
+
+    Ok(x_runs)
+}
+
+fn write_row_sheet_png(
+    path: &Path,
+    source_img: &DynamicImage,
+    row: &RowRegion,
+    x_runs: &[(u32, u32)],
+) -> Result<()> {
+    let (canvas_w, canvas_h) = row_canvas_size(row, x_runs)?;
+    let mut sheet =
+        RgbaImage::from_pixel(canvas_w * x_runs.len() as u32, canvas_h, Rgba([0, 0, 0, 0]));
+
+    for (i, (start_x, end_x)) in x_runs.iter().copied().enumerate() {
+        let frame_w = end_x - start_x;
+        let cropped = source_img
+            .crop_imm(start_x, row.src_y, frame_w, row.src_h)
+            .to_rgba8();
+        blit_clipped(&mut sheet, &cropped, (i as u32 * canvas_w) as i32, 0);
+    }
+
+    sheet.save(path)?;
+    Ok(())
+}
+
+fn write_row_debug_png(
+    path: &Path,
+    source_img: &DynamicImage,
+    row: &RowRegion,
+    x_runs: &[(u32, u32)],
+) -> Result<()> {
+    let (canvas_w, canvas_h) = row_canvas_size(row, x_runs)?;
+    let output_w = canvas_w * x_runs.len() as u32 + x_runs.len().saturating_sub(1) as u32;
+    let mut debug = RgbaImage::from_pixel(output_w, canvas_h, Rgba([0, 0, 0, 0]));
+
+    for (i, (start_x, end_x)) in x_runs.iter().copied().enumerate() {
+        let frame_w = end_x - start_x;
+        let cropped = source_img
+            .crop_imm(start_x, row.src_y, frame_w, row.src_h)
+            .to_rgba8();
+        let dst_x = i as u32 * (canvas_w + 1);
+        blit_clipped(&mut debug, &cropped, dst_x as i32, 0);
+
+        if i + 1 < x_runs.len() {
+            draw_vertical_line(&mut debug, dst_x + canvas_w, Rgba([255, 0, 0, 255]));
+        }
+    }
+
+    debug.save(path)?;
+    Ok(())
+}
+
+fn write_row_gif(
+    path: &Path,
+    source_img: &DynamicImage,
+    row: &RowRegion,
+    x_runs: &[(u32, u32)],
+    fps: u32,
+) -> Result<()> {
+    let (canvas_w, canvas_h) = row_canvas_size(row, x_runs)?;
+    let delay = (100.0 / fps.max(1) as f32).round().max(1.0) as u16;
+    let mut file = File::create(path)?;
+    let mut encoder = Encoder::new(&mut file, canvas_w as u16, canvas_h as u16, &[])?;
+    encoder.set_repeat(Repeat::Infinite)?;
+
+    for (start_x, end_x) in x_runs.iter().copied() {
+        let frame_w = end_x - start_x;
+        let cropped = source_img
+            .crop_imm(start_x, row.src_y, frame_w, row.src_h)
+            .to_rgba8();
+        let mut normalized = RgbaImage::from_pixel(canvas_w, canvas_h, Rgba([0, 0, 0, 0]));
+        blit_clipped(&mut normalized, &cropped, 0, 0);
+
+        let mut raw = normalized.into_raw();
+        let mut frame = GifFrame::from_rgba_speed(canvas_w as u16, canvas_h as u16, &mut raw, 10);
+        frame.delay = delay;
+        frame.dispose = DisposalMethod::Background;
+        encoder.write_frame(&frame)?;
+    }
+
+    drop(encoder);
+    file.flush()?;
+
+    Ok(())
+}
+
+fn row_canvas_size(row: &RowRegion, x_runs: &[(u32, u32)]) -> Result<(u32, u32)> {
+    let canvas_w = x_runs
+        .iter()
+        .map(|(start_x, end_x)| end_x - start_x)
+        .max()
+        .unwrap_or(0);
+    let canvas_h = row.src_h;
+
+    if canvas_w == 0 || canvas_h == 0 {
+        return Err(anyhow!("row has zero-sized canvas: {:?}", row));
+    }
+
+    Ok((canvas_w, canvas_h))
+}
+
+fn draw_vertical_line(img: &mut RgbaImage, x: u32, color: Rgba<u8>) {
+    if x >= img.width() {
+        return;
+    }
+
+    for y in 0..img.height() {
+        img.put_pixel(x, y, color);
+    }
 }
 
 fn blit_clipped(dst: &mut RgbaImage, src: &RgbaImage, dst_x: i32, dst_y: i32) {

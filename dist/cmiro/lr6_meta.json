@@ -85,10 +85,10 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_lr_00",
-      "src_x": 10,
+      "name": "cmiro_lr_06",
+      "src_x": 0,
       "src_y": 270,
-      "src_w": 63,
+      "src_w": 55,
       "src_h": 82,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -98,10 +98,10 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_lr_01",
-      "src_x": 73,
+      "name": "cmiro_lr_07",
+      "src_x": 55,
       "src_y": 270,
-      "src_w": 76,
+      "src_w": 74,
       "src_h": 82,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -111,10 +111,10 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_lr_02",
-      "src_x": 149,
+      "name": "cmiro_lr_08",
+      "src_x": 129,
       "src_y": 270,
-      "src_w": 46,
+      "src_w": 56,
       "src_h": 82,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -124,10 +124,10 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_lr_03",
-      "src_x": 195,
+      "name": "cmiro_lr_09",
+      "src_x": 185,
       "src_y": 270,
-      "src_w": 83,
+      "src_w": 77,
       "src_h": 82,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -137,10 +137,10 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_lr_04",
-      "src_x": 278,
+      "name": "cmiro_lr_10",
+      "src_x": 262,
       "src_y": 270,
-      "src_w": 80,
+      "src_w": 79,
       "src_h": 82,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -150,10 +150,10 @@
       "sheet_y": 82
     },
     {
-      "name": "cmiro_lr_05",
-      "src_x": 358,
+      "name": "cmiro_lr_11",
+      "src_x": 341,
       "src_y": 270,
-      "src_w": 74,
+      "src_w": 91,
       "src_h": 82,
       "pivot_x": 36,
       "pivot_y": 76,

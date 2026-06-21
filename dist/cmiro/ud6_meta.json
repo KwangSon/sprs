@@ -85,10 +85,10 @@
       "sheet_y": 0
     },
     {
-      "name": "cmiro_ud_00",
+      "name": "cmiro_ud_06",
       "src_x": 0,
       "src_y": 90,
-      "src_w": 64,
+      "src_w": 72,
       "src_h": 96,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -98,8 +98,8 @@
       "sheet_y": 98
     },
     {
-      "name": "cmiro_ud_01",
-      "src_x": 64,
+      "name": "cmiro_ud_07",
+      "src_x": 72,
       "src_y": 90,
       "src_w": 56,
       "src_h": 96,
@@ -111,10 +111,10 @@
       "sheet_y": 98
     },
     {
-      "name": "cmiro_ud_02",
-      "src_x": 120,
+      "name": "cmiro_ud_08",
+      "src_x": 128,
       "src_y": 90,
-      "src_w": 56,
+      "src_w": 60,
       "src_h": 96,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -124,10 +124,10 @@
       "sheet_y": 98
     },
     {
-      "name": "cmiro_ud_03",
-      "src_x": 176,
+      "name": "cmiro_ud_09",
+      "src_x": 188,
       "src_y": 90,
-      "src_w": 48,
+      "src_w": 56,
       "src_h": 96,
       "pivot_x": 36,
       "pivot_y": 76,
@@ -137,8 +137,8 @@
       "sheet_y": 98
     },
     {
-      "name": "cmiro_ud_04",
-      "src_x": 224,
+      "name": "cmiro_ud_10",
+      "src_x": 244,
       "src_y": 90,
       "src_w": 48,
       "src_h": 96,
@@ -150,10 +150,10 @@
       "sheet_y": 98
     },
     {
-      "name": "cmiro_ud_05",
-      "src_x": 272,
+      "name": "cmiro_ud_11",
+      "src_x": 292,
       "src_y": 90,
-      "src_w": 160,
+      "src_w": 140,
       "src_h": 96,
       "pivot_x": 36,
       "pivot_y": 76,

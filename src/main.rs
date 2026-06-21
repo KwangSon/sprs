@@ -100,15 +100,10 @@ struct Settings {
 
 #[derive(Debug, Deserialize)]
 struct FramesFile {
-    y_coords: Vec<u32>,
-    default_pivot: Option<[i32; 2]>,
-    rows: Vec<RowDef>,
-}
-
-#[derive(Debug, Deserialize)]
-struct RowDef {
     prefix: String,
+    y_coords: Vec<u32>,
     x_coords: Vec<u32>,
+    default_pivot: Option<[i32; 2]>,
     pivots: Option<Vec<[i32; 2]>>,
 }
 
@@ -156,12 +151,11 @@ fn main() -> Result<()> {
     let (canvas_w, canvas_h) = parse_size(&settings.canvas)?;
     let frames_file = read_frames(&settings.frames)?;
 
-    if frames_file.rows.is_empty() {
-        return Err(anyhow!("frames.json has no rows"));
+    if frames_file.y_coords.len() < 2 {
+        return Err(anyhow!("frames.json y_coords length must be at least 2"));
     }
-
-    if frames_file.y_coords.len() < frames_file.rows.len() + 1 {
-        return Err(anyhow!("frames.json y_coords length must be at least rows.len() + 1"));
+    if frames_file.x_coords.len() < 2 {
+        return Err(anyhow!("frames.json x_coords length must be at least 2"));
     }
 
     let (target_pivot_x, target_pivot_y) = match &settings.target_pivot {
@@ -169,18 +163,14 @@ fn main() -> Result<()> {
         None => {
             if let Some(dp) = frames_file.default_pivot {
                 (dp[0], dp[1])
-            } else if let Some(first_row) = frames_file.rows.first() {
-                if let Some(pivots) = &first_row.pivots {
-                    if let Some(p) = pivots.first() {
-                        (p[0], p[1])
-                    } else {
-                        return Err(anyhow!("no pivot found in first row"));
-                    }
+            } else if let Some(pivots) = &frames_file.pivots {
+                if let Some(p) = pivots.first() {
+                    (p[0], p[1])
                 } else {
-                    return Err(anyhow!("no default_pivot and no pivots in first row"));
+                    return Err(anyhow!("pivots array is empty"));
                 }
             } else {
-                return Err(anyhow!("frames.json has no valid rows to extract pivot"));
+                return Err(anyhow!("no default_pivot and no custom pivots found"));
             }
         }
     };
@@ -188,30 +178,29 @@ fn main() -> Result<()> {
     let source_img = load_input_image(&settings)?;
 
     let mut actual_frames = Vec::new();
-    for (r, row) in frames_file.rows.iter().enumerate() {
-        if row.x_coords.len() < 2 {
-            continue;
-        }
+    let num_rows = frames_file.y_coords.len() - 1;
+    let num_cols = frames_file.x_coords.len() - 1;
 
+    if let Some(cols) = settings.columns {
+        if num_cols as u32 != cols {
+            println!(
+                "Warning: x_coords defines {} columns, but settings.columns is {}",
+                num_cols, cols
+            );
+        }
+    }
+
+    let mut frame_index = 0;
+    for r in 0..num_rows {
         let src_y = frames_file.y_coords[r];
         let src_h = frames_file.y_coords[r + 1].saturating_sub(src_y);
-        let num_frames = row.x_coords.len() - 1;
 
-        if let Some(cols) = settings.columns {
-            if num_frames as u32 != cols {
-                println!(
-                    "Warning: row '{}' has {} frames, but settings.columns is {}",
-                    row.prefix, num_frames, cols
-                );
-            }
-        }
+        for c in 0..num_cols {
+            let src_x = frames_file.x_coords[c];
+            let src_w = frames_file.x_coords[c + 1].saturating_sub(src_x);
 
-        for c in 0..num_frames {
-            let src_x = row.x_coords[c];
-            let src_w = row.x_coords[c + 1].saturating_sub(src_x);
-
-            let pivot = if let Some(pivots) = &row.pivots {
-                if let Some(p) = pivots.get(c) {
+            let pivot = if let Some(pivots) = &frames_file.pivots {
+                if let Some(p) = pivots.get(frame_index) {
                     *p
                 } else {
                     frames_file.default_pivot.unwrap_or([0, 0])
@@ -221,7 +210,7 @@ fn main() -> Result<()> {
             };
 
             actual_frames.push(ValidFrame {
-                name: format!("{}_{:02}", row.prefix, c),
+                name: format!("{}_{:02}", frames_file.prefix, frame_index),
                 src_x,
                 src_y,
                 src_w,
@@ -229,6 +218,7 @@ fn main() -> Result<()> {
                 pivot_x: pivot[0],
                 pivot_y: pivot[1],
             });
+            frame_index += 1;
         }
     }
 

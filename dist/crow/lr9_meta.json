@@ -124,7 +124,7 @@
       "sheet_y": 0
     },
     {
-      "name": "crow_lr_00",
+      "name": "crow_lr_09",
       "src_x": 0,
       "src_y": 288,
       "src_w": 64,
@@ -137,7 +137,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_01",
+      "name": "crow_lr_10",
       "src_x": 64,
       "src_y": 288,
       "src_w": 64,
@@ -150,7 +150,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_02",
+      "name": "crow_lr_11",
       "src_x": 128,
       "src_y": 288,
       "src_w": 64,
@@ -163,7 +163,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_03",
+      "name": "crow_lr_12",
       "src_x": 192,
       "src_y": 288,
       "src_w": 64,
@@ -176,7 +176,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_04",
+      "name": "crow_lr_13",
       "src_x": 256,
       "src_y": 288,
       "src_w": 64,
@@ -189,7 +189,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_05",
+      "name": "crow_lr_14",
       "src_x": 320,
       "src_y": 288,
       "src_w": 64,
@@ -202,7 +202,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_06",
+      "name": "crow_lr_15",
       "src_x": 384,
       "src_y": 288,
       "src_w": 64,
@@ -215,7 +215,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_07",
+      "name": "crow_lr_16",
       "src_x": 448,
       "src_y": 288,
       "src_w": 64,
@@ -228,7 +228,7 @@
       "sheet_y": 96
     },
     {
-      "name": "crow_lr_08",
+      "name": "crow_lr_17",
       "src_x": 512,
       "src_y": 288,
       "src_w": 64,

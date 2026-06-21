@@ -1,14 +1,3 @@
 {
-  "input": "assets/source.png",
-  "frames": "assets/frames.json",
-  "canvas": "64x64",
-  "output": "dist/sheet.png",
-  "frames_out_dir": "dist/frames",
-  "pivot_png_dir": "dist/pivots",
-  "debug_sheet": "dist/debug_sheet.png",
-  "gif": "dist/preview.gif",
-  "columns": 4,
-  "marker_size": 4,
-  "gif_scale": 2,
-  "out_meta": "dist/meta.json"
+  "input": "assets/source.png"
 }
